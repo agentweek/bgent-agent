@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bgent Sealed Blocks</title>
+<meta name="description" content="Check, open and claim Bgent Sealed Blocks with any BNB Chain wallet.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FBF7EC;--paper:#FFFDF6;--ink:#0C0B07;--mute:#6B6656;--yellow:#FBBC1F;--yellow-soft:#FDE7A8;--ok:#0E9F6E;--bad:#D93A3F;
+--t0:#8A8F98;--t1:#2F6FED;--t2:#8B3FD9;--t3:#FBBC1F;--t4:#E5484D}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--cream);color:var(--ink);font:16px/1.55 "Space Grotesk",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--yellow-soft) 0 0),linear-gradient(var(--yellow-soft) 0 0),linear-gradient(var(--yellow) 0 0),
+    linear-gradient(var(--yellow-soft) 0 0),linear-gradient(var(--yellow) 0 0);
+  background-size:14px 14px,14px 14px,10px 10px,14px 14px,10px 10px;
+  background-position:3% 30%,5% 33%,4% 37%,96% 62%,94% 66%;background-repeat:no-repeat;background-attachment:fixed}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 72px}
+.pix{font-family:"Silkscreen",monospace;letter-spacing:.5px}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;word-break:break-all}
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:22px;text-decoration:none;color:var(--ink)}
+.brand img{width:38px;height:38px}
+.btn{font:600 15px "Space Grotesk",sans-serif;border:2px solid var(--ink);border-radius:0;padding:10px 18px;cursor:pointer;
+  background:var(--yellow);color:var(--ink);box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.ghost{background:var(--paper)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--ink)}
+.hero{border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);overflow:hidden;background:var(--paper)}
+.hero img{display:block;width:100%;height:auto}
+.lead{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:end;margin:28px 0 8px}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0}
+h1 .hl{background:var(--yellow);padding:0 8px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08)}
+.lead p{margin:0;color:var(--mute)}
+.card{background:var(--paper);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:20px;margin:26px 0}
+.card h2{font-size:15px;margin:0 0 14px;text-transform:uppercase}
+.tag{display:inline-block;background:var(--ink);color:var(--yellow);padding:2px 8px;font-size:12px;margin-right:8px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:10px 8px;border-bottom:2px dashed #E7DFC8}th{font-weight:500;color:var(--mute);font-size:13px}
+.sq{display:inline-block;width:12px;height:12px;margin-right:10px;vertical-align:-1px;border:2px solid var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.blk{border:2px solid var(--ink);background:var(--cream);position:relative;box-shadow:4px 4px 0 var(--ink)}
+.blk .band{height:12px;border-bottom:2px solid var(--ink)}
+.blk .in{padding:14px 16px 16px}
+.blk .tier{font-size:24px;font-weight:700;line-height:1.1}
+.blk .meta{color:var(--mute);font-size:13px;margin:4px 0 12px}
+.blk .rng{display:inline-block;background:var(--ink);color:var(--yellow);padding:6px 10px;font-size:15px;margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input{font:500 16px "JetBrains Mono",monospace;background:var(--cream);color:var(--ink);border:2px solid var(--ink);border-radius:0;padding:10px 12px;width:170px}
+input:focus{outline:3px solid var(--yellow);outline-offset:0}
+.msg{margin-top:12px;font-size:14px;color:var(--mute);white-space:pre-wrap}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.win{font-size:30px;font-weight:700;color:var(--ink);margin:4px 0 10px}
+.win span{background:var(--yellow);padding:0 6px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.steps b{display:grid;place-items:center;width:30px;height:30px;background:var(--yellow);border:2px solid var(--ink);font-family:"Silkscreen",monospace;font-weight:400}
+.note{background:var(--yellow-soft);border:2px solid var(--ink);padding:10px 12px;font-size:14px;margin-top:16px}
+footer{color:var(--mute);font-size:13px;margin-top:34px;border-top:2px solid var(--ink);padding-top:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+a{color:var(--ink)}
+@media (max-width:680px){.lead{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <a class="brand" href="#"><img src="assets/logo.png" alt="">Bgent</a>
+  <button class="btn" id="connect">Connect wallet</button>
+</nav>
+
+<div class="hero"><img src="assets/banner.jpg" alt="Bgent"></div>
+
+<section class="lead">
+  <h1>Sealed <span class="hl">Blocks</span></h1>
+  <p>Found by Binance Agents. Traded freely as NFTs. Any BNB Chain wallet can check a block's tier, open it and receive the BGENT inside. Whoever opens it, gets it.</p>
+</section>
+
+<div class="card" id="myblocks" hidden>
+  <h2><span class="tag pix">01</span>My blocks</h2>
+  <div class="mono" id="me"></div>
+  <div class="grid" id="list" style="margin-top:16px"></div>
+  <div class="msg" id="listMsg"></div>
+</div>
+
+<div class="card">
+  <h2><span class="tag pix">02</span>Check any block before you buy</h2>
+  <div class="row"><input id="qid" inputmode="numeric" placeholder="Block #"><button class="btn ghost" id="qbtn">Check</button></div>
+  <div class="msg" id="qmsg"></div>
+</div>
+
+<div class="card">
+  <h2><span class="tag pix">03</span>Five tiers</h2>
+  <table><thead><tr><th>Tier</th><th>Supply cap</th><th>Opens for</th></tr></thead><tbody id="tierRows"></tbody></table>
+  <div class="note">The tier is fixed the moment a block is found and can be read on chain. The exact amount is drawn when it is opened, from a block hash two blocks later; lower amounts are more likely (the average sits about one third into the range). Opened blocks are burned, so an opened block can never be resold as sealed.</div>
+</div>
+
+<div class="card">
+  <h2><span class="tag pix">04</span>How to open</h2>
+  <ol class="steps">
+    <li><b>1</b><span>Connect any BNB Chain wallet: MetaMask, Binance Web3 Wallet, OKX, Trust and others.</span></li>
+    <li><b>2</b><span>Keep a little BNB for gas. Opening takes two transactions, usually under 0.0001 BNB in total.</span></li>
+    <li><b>3</b><span>Click <strong>Open</strong>. Your wallet asks twice: first to lock the block, then about two seconds later to draw the result.</span></li>
+    <li><b>4</b><span>Confirm the second step within about 2 minutes (256 blocks). After that the block pays its tier minimum. Closed the page? Come back and click <strong>Resume</strong>.</span></li>
+    <li><b>5</b><span>The BGENT lands in your wallet and the page shows the amount.</span></li>
+  </ol>
+</div>
+
+<footer>
+  <div>Sealed Block contract <span class="mono" id="addr"></span></div>
+  <div>Bgent is not affiliated with Binance. Bgent and Sealed Blocks carry no guaranteed return.</div>
+</footer>
+</div>
+
+<script>
+// ---- addresses (filled at release; deployments.json next to this page overrides) ----
+let SEALED = "0xce96562259064215ea588C496D65d54d5d1f4769", TOKEN = "0x093805D4f9FE61d1C3e89D80041c593C123Df9C9";
+const RPCS = ["https://bsc-dataseed.bnbchain.org", "https://bsc-dataseed1.binance.org", "https://bsc-rpc.publicnode.com"];
+const TIERS = [["Common","--t0",300000,"0.5","2"],["Rare","--t1",100000,"1","4"],["Epic","--t2",35000,"3","8"],
+               ["Legendary","--t3",8000,"6","16"],["Mythic","--t4",1444,"12","32"]];
+const SEL = {balanceOf:"70a08231", byIndex:"2f745c59", info:"2e340599", ownerOf:"6352211e", request:"40261cdd", resolve:"f052e226"};
+const REVEALED = "0x992f397c17918ef6931de408c497e41cefb989a8363e1bfda008157e2b65d36f";
+const WINDOW = 256, DELAY = 2;
+const $ = id => document.getElementById(id);
+
+$("tierRows").innerHTML = TIERS.map((x,i) =>
+  `<tr><td><span class="sq" style="background:var(${x[1]})"></span>${i+1} · ${x[0]}</td><td>${x[2].toLocaleString("en-US")}</td><td>${x[3]} – ${x[4]} BGENT</td></tr>`).join("");
+
+// ---- chain access ----
+let account = null;
+const pad = v => BigInt(v).toString(16).padStart(64, "0");
+const word = (hex, i) => BigInt("0x" + hex.slice(2 + i*64, 2 + (i+1)*64));
+async function rpc(method, params){
+  if (account && window.ethereum) return window.ethereum.request({method, params});
+  let last;
+  for (const u of RPCS) {
+    try {
+      const r = await fetch(u, {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({jsonrpc:"2.0", id:1, method, params})});
+      const j = await r.json(); if (j.error) throw new Error(j.error.message); return j.result;
+    } catch (e) { last = e; }
+  }
+  throw last;
+}
+const call = (sel, ...args) => rpc("eth_call", [{to: SEALED, data: "0x" + sel + args.map(pad).join("")}, "latest"]);
+const blockNo = async () => Number(await rpc("eth_blockNumber", []));
+const fmt = w => (Number(w) / 1e18).toFixed(4).replace(/\.?0+$/, "");
+const errText = e => (e && (e.shortMessage || e.message)) || String(e);
+async function infoOf(id){
+  const h = await call(SEL.info, id);
+  return {level: Number(word(h,0)), status: Number(word(h,1)), pendingBlock: Number(word(h,3))};
+}
+async function ownerOf(id){
+  try { const h = await call(SEL.ownerOf, id); return "0x" + h.slice(-40); } catch { return null; }
+}
+
+// ---- wallet ----
+const BSC = {chainId:"0x38", chainName:"BNB Smart Chain", nativeCurrency:{name:"BNB", symbol:"BNB", decimals:18}, rpcUrls:[RPCS[0]], blockExplorerUrls:["https://bscscan.com"]};
+$("connect").onclick = async () => {
+  $("myblocks").hidden = false;
+  if (!window.ethereum) { $("listMsg").textContent = "No wallet found. Open this page in the browser of MetaMask, Binance Web3 Wallet, OKX or another BNB Chain wallet."; return; }
+  try {
+    [account] = await window.ethereum.request({method:"eth_requestAccounts"});
+    if (await window.ethereum.request({method:"eth_chainId"}) !== "0x38") {
+      try { await window.ethereum.request({method:"wallet_switchEthereumChain", params:[{chainId:"0x38"}]}); }
+      catch { await window.ethereum.request({method:"wallet_addEthereumChain", params:[BSC]}); }
+    }
+    window.ethereum.on?.("accountsChanged", a => { account = a[0] || null; account ? loadMine() : location.reload(); });
+    window.ethereum.on?.("chainChanged", () => location.reload());
+    $("connect").textContent = account.slice(0,6) + "…" + account.slice(-4);
+    loadMine();
+  } catch (e) { $("listMsg").className = "msg bad"; $("listMsg").textContent = "Failed: " + errText(e); }
+};
+
+function blockCard(id, inf){
+  const x = TIERS[inf.level];
+  return `<div class="blk" id="b${id}"><div class="band" style="background:var(${x[1]})"></div><div class="in">
+    <div class="tier">${x[0]}</div>
+    <div class="meta pix">#${id} · Tier ${inf.level+1}/5 · ${inf.status === 1 ? "Opening (locked)" : "Sealed"}</div>
+    <div class="rng mono">${x[3]} – ${x[4]} BGENT</div><br>
+    <button class="btn" data-open="${id}">${inf.status === 1 ? "Resume" : "Open"}</button>
+    <div class="msg" id="m${id}"></div></div></div>`;
+}
+async function loadMine(){
+  $("me").textContent = account; $("listMsg").className = "msg"; $("listMsg").textContent = "Loading…"; $("list").innerHTML = "";
+  try {
+    const n = Number(BigInt(await call(SEL.balanceOf, account)));
+    const ids = [];
+    for (let i = 0; i < n; i++) ids.push(BigInt(await call(SEL.byIndex, account, i)));
+    const infos = await Promise.all(ids.map(infoOf));
+    $("list").innerHTML = ids.map((id,i) => blockCard(id, infos[i])).join("");
+    $("listMsg").textContent = n ? "" : "This wallet holds no Sealed Blocks yet. Buy BSB on an NFT marketplace, or get one from a Binance Agent holder.";
+    document.querySelectorAll("[data-open]").forEach(b => b.onclick = () => openBlock(BigInt(b.dataset.open), b));
+  } catch (e) { $("listMsg").className = "msg bad"; $("listMsg").textContent = "Failed: " + errText(e); }
+}
+
+// ---- opening ----
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function send(sel, id){
+  const hash = await window.ethereum.request({method:"eth_sendTransaction", params:[{from: account, to: SEALED, data: "0x" + sel + pad(id)}]});
+  for (;;) {
+    const r = await rpc("eth_getTransactionReceipt", [hash]);
+    if (r) { if (r.status !== "0x1") throw new Error("Transaction reverted: " + hash); return r; }
+    await sleep(800);
+  }
+}
+async function openBlock(id, btn){
+  const m = $("m" + id); m.className = "msg"; btn.disabled = true; btn.textContent = "Opening…";
+  try {
+    let inf = await infoOf(id);
+    if (inf.status === 0) { m.textContent = "Step 1 of 2: confirm in your wallet to lock the block…"; await send(SEL.request, id); inf = await infoOf(id); }
+    const ready = inf.pendingBlock + DELAY + 1;
+    for (let b = await blockNo(); b < ready; b = await blockNo()) { m.textContent = `Waiting for ${ready - b} more block(s)…`; await sleep(500); }
+    const left = inf.pendingBlock + DELAY + WINDOW - await blockNo();
+    m.textContent = left > 0 ? `Step 2 of 2: confirm in your wallet to draw the result (${left} blocks left)…` : "The window has passed: opening now pays the tier minimum.";
+    const r = await send(SEL.resolve, id);
+    const lg = r.logs.find(l => l.topics[0] === REVEALED && BigInt(l.topics[1]) === id);
+    const amount = lg ? BigInt(lg.data.slice(0, 66)) : 0n;
+    m.className = "msg ok";
+    m.innerHTML = `You received<div class="win"><span>${fmt(amount)} BGENT</span></div><button class="btn ghost" id="watch${id}">Add BGENT to wallet</button>`;
+    btn.remove();
+    $("watch" + id).onclick = () => window.ethereum.request({method:"wallet_watchAsset", params:{type:"ERC20", options:{address: TOKEN, symbol:"BGENT", decimals:18}}}).catch(()=>{});
+  } catch (e) {
+    m.className = "msg bad"; m.textContent = "Failed: " + errText(e);
+    btn.disabled = false; btn.textContent = (await infoOf(id).catch(()=>({status:0}))).status === 1 ? "Resume" : "Open";
+  }
+}
+
+// ---- lookup ----
+$("qbtn").onclick = async () => {
+  const q = $("qmsg"); q.className = "msg";
+  let id; try { id = BigInt($("qid").value.replace("#","").trim()); } catch { q.textContent = "Enter a block number."; return; }
+  q.textContent = "Checking…";
+  try {
+    const owner = await ownerOf(id);
+    if (!owner) { q.textContent = `#${id}: already opened (burned) or does not exist.`; return; }
+    const inf = await infoOf(id), x = TIERS[inf.level];
+    q.innerHTML = `<strong style="font-size:18px"><span class="sq" style="background:var(${x[1]})"></span>#${id} · ${x[0]} (Tier ${inf.level+1}/5)</strong>\nOpens for ${x[3]} – ${x[4]} BGENT\nStatus: ${inf.status===1?"Opening (locked, cannot be transferred)":"Sealed"}\nOwner: <span class="mono">${owner}</span>`;
+  } catch (e) { q.className = "msg bad"; q.textContent = "Failed: " + errText(e); }
+};
+$("qid").addEventListener("keydown", e => { if (e.key === "Enter") $("qbtn").click(); });
+
+(async () => {
+  try { const d = await (await fetch("skills/bgent/deployments.json", {cache:"no-store"})).json(); SEALED = d.SealedBlock || SEALED; TOKEN = d.BGENT || TOKEN; } catch {}
+  $("addr").textContent = SEALED.startsWith("0x") ? SEALED : "";
+})();
+</script>
+</body>
+</html>

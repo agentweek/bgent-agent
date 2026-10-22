@@ -1,0 +1,12 @@
+{
+  "chainId": 56,
+  "version": "3-agent-id",
+  "genesisTime": 1792677000,
+  "AgentID": "0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F",
+  "BgentWorld": "0xf9F6da03ADffA9ec6d9c8ec914ceccb2A56193bD",
+  "SealedBlock": "0xce96562259064215ea588C496D65d54d5d1f4769",
+  "EcosystemVesting": "0xd944341183151D4bDff17b577893ce447BB6870c",
+  "TeamVesting": "0xAA2E3fAfD32ceBCe3A724665A7A2C108832f0D8A",
+  "ProjectSafe": "0x13f9f396b034a500c7950a8a7b1f614c153578d6",
+  "BGENT": "0x093805D4f9FE61d1C3e89D80041c593C123Df9C9"
+}
