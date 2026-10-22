@@ -82,7 +82,8 @@ function bawSend(from, to, sig, args, label, done) {
   const p = baw(["contract-call", "preview", "--binanceChainId", "56", "--from", from, "--to", to, "--inputData", data]);
   if (!p.requestId) throw new Error(`preview returned no requestId for ${label}`);
   const sim = p.simulationResult || {};
-  if (sim.simulationErrorDetail) throw new Error(`${label} would fail: ${sim.simulationErrorDetail}`);
+  if (sim.simulationErrorDetail || (sim.simulationCode && sim.simulationCode !== "000000000"))
+    throw new Error(`${label} would fail: ${sim.simulationErrorDetail || "simulation code " + sim.simulationCode}`);
   const ex = baw(["contract-call", "execute", "--requestId", p.requestId]);
   if (ex.status === "PENDING_CONFIRMATION") log(`Confirm the "${label}" transaction in the Binance App…`);
   for (let i = 0; i < 200; i++) { if (done()) return ex.txHash || null; sleep(1500); }
